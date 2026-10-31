@@ -37,7 +37,8 @@ create table site_settings (
   timeline jsonb default '[]',   -- [{"period":"...","title":"...","detail":"..."}]
   tools text[] default '{}',
   status text,                   -- short text in the round sticker on the hero
-  resume_url text                -- link to resume file
+  resume_url text,               -- link to resume file
+  avatar_url text                -- profile photo shown in the About section
 );
 
 insert into site_settings (id, name, tagline, bio, email, stats, skills, timeline, tools) values (

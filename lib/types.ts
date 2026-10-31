@@ -30,4 +30,5 @@ export interface Settings {
   tools: string[]
   status: string
   resume_url: string
+  avatar_url: string
 }

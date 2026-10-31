@@ -47,6 +47,7 @@ export function normalizeSettings(d: Record<string, unknown> | null): Settings {
     tools: x.tools ?? [],
     status: x.status || 'เปิดรับโอกาส',
     resume_url: x.resume_url || '',
+    avatar_url: x.avatar_url || '',
   }
 }
 

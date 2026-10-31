@@ -10,7 +10,7 @@ import {
 export default function SettingsPage() {
   const sb = useMemo(() => createClient(), [])
   const [f, setF] = useState({
-    name: '', tagline: '', bio: '', email: '', status: '', resume_url: '',
+    name: '', tagline: '', bio: '', email: '', status: '', resume_url: '', avatar_url: '',
     stats: '', skills: '', timeline: '', tools: '',
   })
   const [msg, setMsg] = useState<{ ok: boolean; t: string } | null>(null)
@@ -24,7 +24,7 @@ export default function SettingsPage() {
       const s = normalizeSettings(data)
       setF({
         name: data?.name ?? '', tagline: data?.tagline ?? '', bio: s.bio, email: s.email,
-        status: data?.status ?? '', resume_url: data?.resume_url ?? '',
+        status: data?.status ?? '', resume_url: data?.resume_url ?? '', avatar_url: data?.avatar_url ?? '',
         stats: statsToText(s.stats), skills: skillsToText(s.skills),
         timeline: timelineToText(s.timeline), tools: toolsToText(s.tools),
       })
@@ -41,6 +41,16 @@ export default function SettingsPage() {
     setUploading(false)
   }
 
+  const uploadAvatar = async (file: File) => {
+    setUploading(true)
+    setMsg(null)
+    const path = `avatar/${Date.now()}-${file.name.replace(/[^\w.-]/g, '_')}`
+    const { error } = await sb.storage.from('portfolio').upload(path, file)
+    if (error) setMsg({ ok: false, t: 'อัปโหลดไม่สำเร็จ: ' + error.message })
+    else set('avatar_url', sb.storage.from('portfolio').getPublicUrl(path).data.publicUrl)
+    setUploading(false)
+  }
+
   const save = async () => {
     setBusy(true)
     setMsg(null)
@@ -51,6 +61,7 @@ export default function SettingsPage() {
       email: f.email.trim() || null,
       status: f.status.trim() || null,
       resume_url: f.resume_url.trim() || null,
+      avatar_url: f.avatar_url.trim() || null,
       stats: textToStats(f.stats),
       skills: textToSkills(f.skills),
       timeline: textToTimeline(f.timeline),
@@ -81,6 +92,13 @@ export default function SettingsPage() {
         <label>ข้อความในสติกเกอร์วงกลมหน้าแรก</label>
         <input type="text" value={f.status} onChange={(e) => set('status', e.target.value)} placeholder="เปิดรับโอกาส" />
         <small>สั้นๆ ไม่เกิน ~12 ตัวอักษร เช่น "หางานฝึกงาน" หรือ "เปิดรับโอกาส"</small>
+      </div>
+      <div className="fld">
+        <label>รูปโปรไฟล์ของคุณ</label>
+        <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && uploadAvatar(e.target.files[0])} />
+        <small>{uploading ? 'กำลังอัปโหลด...' : 'จะแสดงแทนตัวอักษรในกล่องสีส้มส่วน "เกี่ยวกับฉัน" (ถ้าไม่ใส่ จะโชว์ตัวอักษรแรกของชื่อ) แนะนำรูปแนวตั้งหรือสี่เหลี่ยมจัตุรัส'}</small>
+        <input type="url" style={{ marginTop: 8 }} value={f.avatar_url} onChange={(e) => set('avatar_url', e.target.value)} placeholder="https://..." />
+        {f.avatar_url && <img src={f.avatar_url} alt="" style={{ marginTop: 10, maxWidth: 160, borderRadius: 12, border: '2px solid var(--ink)' }} />}
       </div>
       <div className="fld">
         <label>ไฟล์เรซูเม่ (ถ้ามี)</label>

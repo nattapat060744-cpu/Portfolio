@@ -50,7 +50,7 @@ function Counter({ n }: { n: number }) {
     id = requestAnimationFrame(step)
     return () => cancelAnimationFrame(id)
   }, [seen, n])
-  return <b ref={ref}>{v}{seen && v >= n ? '+' : ''}</b>
+  return <b ref={ref}>{v}</b>
 }
 
 function Bar({ name, level }: { name: string; level: number }) {
@@ -254,7 +254,7 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
               <h3 style={{ marginTop: 0, fontSize: 24 }}>เล่าเรื่องตัวเอง</h3>
               <p className="bio-t">{s.bio || 'ยังไม่ได้ใส่ข้อความแนะนำตัว'}</p>
             </div>
-            <div className="box b-pic">{s.name.charAt(0)}</div>
+            <div className="box b-pic">{s.avatar_url ? <img src={s.avatar_url} alt={s.name} /> : s.name.charAt(0)}</div>
             {s.skills.length > 0 && (
               <div className="box b-skill">
                 <h3 style={{ marginTop: 0 }}>ทักษะ</h3>
