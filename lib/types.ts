@@ -28,4 +28,6 @@ export interface Settings {
   skills: { name: string; level: number }[]
   timeline: { period: string; title: string; detail: string }[]
   tools: string[]
+  status: string
+  resume_url: string
 }

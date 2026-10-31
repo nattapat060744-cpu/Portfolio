@@ -9,9 +9,13 @@ import {
 
 export default function SettingsPage() {
   const sb = useMemo(() => createClient(), [])
-  const [f, setF] = useState({ name: '', tagline: '', bio: '', email: '', stats: '', skills: '', timeline: '', tools: '' })
+  const [f, setF] = useState({
+    name: '', tagline: '', bio: '', email: '', status: '', resume_url: '',
+    stats: '', skills: '', timeline: '', tools: '',
+  })
   const [msg, setMsg] = useState<{ ok: boolean; t: string } | null>(null)
   const [busy, setBusy] = useState(false)
+  const [uploading, setUploading] = useState(false)
 
   const set = (k: keyof typeof f, v: string) => setF((p) => ({ ...p, [k]: v }))
 
@@ -20,11 +24,22 @@ export default function SettingsPage() {
       const s = normalizeSettings(data)
       setF({
         name: data?.name ?? '', tagline: data?.tagline ?? '', bio: s.bio, email: s.email,
+        status: data?.status ?? '', resume_url: data?.resume_url ?? '',
         stats: statsToText(s.stats), skills: skillsToText(s.skills),
         timeline: timelineToText(s.timeline), tools: toolsToText(s.tools),
       })
     })
   }, [sb])
+
+  const uploadResume = async (file: File) => {
+    setUploading(true)
+    setMsg(null)
+    const path = `resume/${Date.now()}-${file.name.replace(/[^\w.-]/g, '_')}`
+    const { error } = await sb.storage.from('portfolio').upload(path, file)
+    if (error) setMsg({ ok: false, t: 'อัปโหลดไม่สำเร็จ: ' + error.message })
+    else set('resume_url', sb.storage.from('portfolio').getPublicUrl(path).data.publicUrl)
+    setUploading(false)
+  }
 
   const save = async () => {
     setBusy(true)
@@ -34,12 +49,14 @@ export default function SettingsPage() {
       tagline: f.tagline || null,
       bio: f.bio || null,
       email: f.email.trim() || null,
+      status: f.status.trim() || null,
+      resume_url: f.resume_url.trim() || null,
       stats: textToStats(f.stats),
       skills: textToSkills(f.skills),
       timeline: textToTimeline(f.timeline),
       tools: textToTools(f.tools),
     }).eq('id', 1)
-    setMsg(error ? { ok: false, t: 'บันทึกไม่สำเร็จ: ' + error.message } : { ok: true, t: 'บันทึกแล้ว หน้าเว็บจะอัปเดตภายในประมาณ 30 วินาที' })
+    setMsg(error ? { ok: false, t: 'บันทึกไม่สำเร็จ: ' + error.message } : { ok: true, t: 'บันทึกแล้ว' })
     setBusy(false)
   }
 
@@ -58,7 +75,18 @@ export default function SettingsPage() {
       </div>
       <div className="fld">
         <label>ข้อความใต้หัวข้อหน้าแรก</label>
-        <textarea value={f.tagline} onChange={(e) => set('tagline', e.target.value)} />
+        <textarea value={f.tagline} onChange={(e) => set('tagline', e.target.value)} placeholder="เช่น นักศึกษาสายไอที สนใจงานพัฒนาเว็บและระบบ" />
+      </div>
+      <div className="fld">
+        <label>ข้อความในสติกเกอร์วงกลมหน้าแรก</label>
+        <input type="text" value={f.status} onChange={(e) => set('status', e.target.value)} placeholder="เปิดรับโอกาส" />
+        <small>สั้นๆ ไม่เกิน ~12 ตัวอักษร เช่น "หางานฝึกงาน" หรือ "เปิดรับโอกาส"</small>
+      </div>
+      <div className="fld">
+        <label>ไฟล์เรซูเม่ (ถ้ามี)</label>
+        <input type="file" accept=".pdf,application/pdf" onChange={(e) => e.target.files?.[0] && uploadResume(e.target.files[0])} />
+        <small>{uploading ? 'กำลังอัปโหลด...' : 'อัปโหลดไฟล์ PDF หรือวางลิงก์ด้านล่าง ถ้ามีลิงก์จะโชว์ปุ่ม "ดาวน์โหลดเรซูเม่" บนหน้าเว็บ'}</small>
+        <input type="url" style={{ marginTop: 8 }} value={f.resume_url} onChange={(e) => set('resume_url', e.target.value)} placeholder="https://..." />
       </div>
       <div className="fld">
         <label>เล่าเรื่องตัวเอง (หน้าเกี่ยวกับ)</label>
@@ -66,8 +94,8 @@ export default function SettingsPage() {
       </div>
       <div className="fld">
         <label>ตัวเลขสถิติ</label>
-        <textarea value={f.stats} onChange={(e) => set('stats', e.target.value)} placeholder={'40|โปรเจกต์ที่ส่งมอบ\n5|ปีประสบการณ์'} />
-        <small>บรรทัดละ 1 รายการ รูปแบบ: ตัวเลข|ข้อความ</small>
+        <textarea value={f.stats} onChange={(e) => set('stats', e.target.value)} placeholder={'10|โปรเจกต์ที่ทำ\n3|ปีที่ฝึกเขียนโค้ด'} />
+        <small>บรรทัดละ 1 รายการ รูปแบบ: ตัวเลข|ข้อความ (ลบทั้งหมดได้ถ้าไม่ต้องการแสดง)</small>
       </div>
       <div className="fld">
         <label>ทักษะ</label>
@@ -80,13 +108,13 @@ export default function SettingsPage() {
         <small>คั่นด้วยเครื่องหมายจุลภาค (,)</small>
       </div>
       <div className="fld">
-        <label>ประสบการณ์ (ไทม์ไลน์)</label>
-        <textarea style={{ minHeight: 140 }} value={f.timeline} onChange={(e) => set('timeline', e.target.value)} placeholder={'2025 – ปัจจุบัน|Freelance Developer|รายละเอียดงาน'} />
-        <small>บรรทัดละ 1 รายการ รูปแบบ: ช่วงเวลา|ตำแหน่ง|รายละเอียด</small>
+        <label>การศึกษาและประสบการณ์ (ไทม์ไลน์)</label>
+        <textarea style={{ minHeight: 140 }} value={f.timeline} onChange={(e) => set('timeline', e.target.value)} placeholder={'2023 – ปัจจุบัน|ชื่อสถานศึกษา / สาขา|รายละเอียด'} />
+        <small>บรรทัดละ 1 รายการ รูปแบบ: ช่วงเวลา|หัวข้อ|รายละเอียด</small>
       </div>
 
       {msg && <div className={'msg ' + (msg.ok ? 'ok' : 'err')}>{msg.t}</div>}
-      <button className="btn" onClick={save} disabled={busy}>{busy ? 'กำลังบันทึก...' : 'บันทึก'}</button>
+      <button className="btn" onClick={save} disabled={busy || uploading}>{busy ? 'กำลังบันทึก...' : 'บันทึก'}</button>
     </>
   )
 }

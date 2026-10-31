@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { Project, Settings } from '@/lib/types'
-import { CATS, ytId } from '@/lib/utils'
+import { CATS, coverSrc, ytId } from '@/lib/utils'
 
 const WORDS = ['เว็บ', 'แอป', 'ระบบ', 'กราฟิก', 'วิดีโอ']
 const WORD_COLORS = [1, 3, 4, 2, 5]
@@ -64,10 +64,16 @@ function Bar({ name, level }: { name: string; level: number }) {
 }
 
 function Cover({ p }: { p: Project }) {
+  const [failed, setFailed] = useState(false)
   const meta = CATS[p.category] ?? CATS.web
   const bg = `var(${meta[1]})`
-  if (p.cover_url) {
-    return <div className="cover" style={{ background: bg }}><img src={p.cover_url} alt={p.title} loading="lazy" /></div>
+  const src = failed ? null : coverSrc(p)
+  if (src) {
+    return (
+      <div className="cover" style={{ background: bg }}>
+        <img src={src} alt={p.title} loading="lazy" style={{ objectPosition: 'top' }} onError={() => setFailed(true)} />
+      </div>
+    )
   }
   let inner: ReactNode
   if (p.category === 'web' || p.category === 'system') {
@@ -172,21 +178,25 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
 
       <main className="wrap" id="top">
         <div className="hero">
-          <div className="sticker s1">พร้อม<br />รับงาน<br />2026</div>
+          <div className="sticker s1">{s.status}</div>
           <div className="sticker s2" />
           <div className="sticker s3" />
-          <span className="badge">👋 สวัสดีครับ</span>
+          <span className="badge">👋 สวัสดีครับ ผม{s.name}</span>
           <h1>
-            ผมสร้าง
+            ชอบสร้าง
             <span className={'word' + (swap ? ' sw' : '')} style={{ background: `var(--c${WORD_COLORS[wi]})` }}>
               {WORDS[wi]}
             </span>
-            <br />ให้ดูดีและใช้งานได้จริง
+            <br />และลงมือทำจริง
           </h1>
           <p className="lead">{s.tagline}</p>
           <div className="cta">
-            <a className="btn" href="#work">ดูผลงานทั้งหมด →</a>
-            {s.email && <a className="btn alt" href="#hire">คุยงานกัน</a>}
+            <a className="btn" href="#work">ดูผลงานของฉัน →</a>
+            {s.resume_url ? (
+              <a className="btn alt" href={s.resume_url} target="_blank" rel="noopener noreferrer">ดาวน์โหลดเรซูเม่</a>
+            ) : (
+              s.email && <a className="btn alt" href="#hire">ติดต่อ</a>
+            )}
           </div>
           {s.stats.length > 0 && (
             <div className="stats">
@@ -207,7 +217,7 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
       <main className="wrap">
         <Reveal id="work">
           <div className="eyebrow">ผลงาน</div>
-          <h2>งานที่ภูมิใจนำเสนอ</h2>
+          <h2>ผลงานของฉัน</h2>
           <div className="tools">
             {Object.keys(CATS).map((k) => (
               <button key={k} className={'chip' + (filter === k ? ' on' : '')} onClick={() => setFilter(k)}>
@@ -238,7 +248,7 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
 
         <Reveal id="about">
           <div className="eyebrow">เกี่ยวกับ</div>
-          <h2>รู้จักผมให้มากขึ้น</h2>
+          <h2>เกี่ยวกับฉัน</h2>
           <div className="bento">
             <div className="box b-bio">
               <h3 style={{ marginTop: 0, fontSize: 24 }}>เล่าเรื่องตัวเอง</h3>
@@ -263,7 +273,7 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
         {s.timeline.length > 0 && (
           <Reveal id="path">
             <div className="eyebrow">เส้นทาง</div>
-            <h2>ประสบการณ์</h2>
+            <h2>การศึกษาและประสบการณ์</h2>
             <div className="tl">
               {s.timeline.map((t, i) => (
                 <div key={i}><small>{t.period}</small><b>{t.title}</b><p>{t.detail}</p></div>
@@ -275,9 +285,15 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
         {s.email && (
           <Reveal id="hire">
             <div className="cta2">
-              <h2>มาสร้างงานดีๆ ด้วยกันไหม?</h2>
-              <p>มีไอเดียหรือโปรเจกต์ในใจ ทักมาคุยกันได้เลย</p>
-              <button className="btn alt" onClick={copyEmail}>คัดลอกอีเมล</button>
+              <h2>สนใจติดต่อ?</h2>
+              <p>หากสนใจผลงานหรืออยากพูดคุยเพิ่มเติม ติดต่อได้ทางอีเมลครับ</p>
+              <p><b>{s.email}</b></p>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button className="btn alt" onClick={copyEmail}>คัดลอกอีเมล</button>
+                {s.resume_url && (
+                  <a className="btn alt" href={s.resume_url} target="_blank" rel="noopener noreferrer">ดาวน์โหลดเรซูเม่</a>
+                )}
+              </div>
             </div>
           </Reveal>
         )}

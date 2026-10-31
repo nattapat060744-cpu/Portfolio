@@ -1,4 +1,4 @@
-import type { Settings } from './types'
+import type { Project, Settings } from './types'
 
 // label + css color variable per category
 export const CATS: Record<string, [string, string]> = {
@@ -14,6 +14,15 @@ export function ytId(url: string | null): string | null {
   if (!url) return null
   const m = url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/)
   return m ? m[1] : null
+}
+
+// Cover image: uploaded image -> YouTube thumbnail -> screenshot of the demo link -> null (CSS pattern)
+export function coverSrc(p: Pick<Project, 'cover_url' | 'youtube_url' | 'demo_url'>): string | null {
+  if (p.cover_url) return p.cover_url
+  const v = ytId(p.youtube_url)
+  if (v) return `https://img.youtube.com/vi/${v}/hqdefault.jpg`
+  if (p.demo_url) return `https://s.wordpress.com/mshots/v1/${encodeURIComponent(p.demo_url)}?w=900&h=560`
+  return null
 }
 
 export function slugify(s: string): string {
@@ -36,6 +45,8 @@ export function normalizeSettings(d: Record<string, unknown> | null): Settings {
     skills: x.skills ?? [],
     timeline: x.timeline ?? [],
     tools: x.tools ?? [],
+    status: x.status || 'เปิดรับโอกาส',
+    resume_url: x.resume_url || '',
   }
 }
 

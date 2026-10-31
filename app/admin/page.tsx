@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { CATS } from '@/lib/utils'
+import { CATS, coverSrc } from '@/lib/utils'
 import type { Project } from '@/lib/types'
 
 export default function AdminProjects() {
@@ -51,7 +51,7 @@ export default function AdminProjects() {
       {!loading && items.length === 0 && <p>ยังไม่มีผลงาน กด "เพิ่มผลงาน" เพื่อเริ่มได้เลย</p>}
       {items.map((p) => (
         <div className="arow" key={p.id}>
-          {p.cover_url ? <img src={p.cover_url} alt="" /> : <div style={{ width: 64, height: 44, borderRadius: 8, border: '2px solid var(--ink)', background: `var(${(CATS[p.category] ?? CATS.web)[1]})` }} />}
+          {coverSrc(p) ? <img src={coverSrc(p)!} alt="" /> : <div style={{ width: 64, height: 44, borderRadius: 8, border: '2px solid var(--ink)', background: `var(${(CATS[p.category] ?? CATS.web)[1]})` }} />}
           <div className="tt">
             {p.title}
             <small>

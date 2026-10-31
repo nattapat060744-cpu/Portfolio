@@ -127,7 +127,7 @@ export default function ProjectForm({ params }: { params: { id: string } }) {
       <div className="fld">
         <label>รูปปก</label>
         <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
-        <small>{uploading ? 'กำลังอัปโหลด...' : 'หรือวางลิงก์รูปด้านล่าง'}</small>
+        <small>{uploading ? 'กำลังอัปโหลด...' : 'หรือวางลิงก์รูปด้านล่าง ถ้าไม่ใส่เลย ระบบจะใช้ภาพหน้าเว็บจากลิงก์ Demo (หรือภาพปกวิดีโอ YouTube) ให้อัตโนมัติ'}</small>
         <input type="url" style={{ marginTop: 8 }} value={f.cover_url} onChange={(e) => set('cover_url', e.target.value)} placeholder="https://..." />
         {f.cover_url && <img src={f.cover_url} alt="" style={{ marginTop: 10, maxWidth: 260, borderRadius: 12, border: '2px solid var(--ink)' }} />}
       </div>

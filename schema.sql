@@ -35,7 +35,9 @@ create table site_settings (
   stats jsonb default '[]',      -- [{"n":40,"label":"..."}]
   skills jsonb default '[]',     -- [{"name":"...","level":90}]
   timeline jsonb default '[]',   -- [{"period":"...","title":"...","detail":"..."}]
-  tools text[] default '{}'
+  tools text[] default '{}',
+  status text,                   -- short text in the round sticker on the hero
+  resume_url text                -- link to resume file
 );
 
 insert into site_settings (id, name, tagline, bio, email, stats, skills, timeline, tools) values (
