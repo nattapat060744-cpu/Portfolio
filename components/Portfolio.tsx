@@ -138,6 +138,21 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
     )
   }, [projects, filter, q])
 
+  // Stats are computed from the real projects, so they are always honest and need no manual editing
+  const stats = useMemo(() => {
+    if (projects.length === 0) return []
+    const techs = new Set(projects.flatMap((p) => p.tech.map((t) => t.trim().toLowerCase()).filter(Boolean)))
+    const out = [{ n: projects.length, label: 'ผลงานทั้งหมด' }]
+    if (techs.size > 0) out.push({ n: techs.size, label: 'เทคโนโลยีและเครื่องมือ' })
+    Object.keys(CATS)
+      .filter((k) => k !== 'all')
+      .forEach((k) => {
+        const n = projects.filter((p) => p.category === k).length
+        if (n > 0) out.push({ n, label: `งาน${CATS[k][0]}` })
+      })
+    return out
+  }, [projects])
+
   const flash = (m: string) => {
     setToast(m)
     setTimeout(() => setToast(''), 2000)
@@ -198,9 +213,9 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
               s.email && <a className="btn alt" href="#hire">ติดต่อ</a>
             )}
           </div>
-          {s.stats.length > 0 && (
+          {stats.length > 0 && (
             <div className="stats">
-              {s.stats.map((x, i) => (
+              {stats.map((x, i) => (
                 <div className="stat" key={i}><Counter n={x.n} /><span>{x.label}</span></div>
               ))}
             </div>

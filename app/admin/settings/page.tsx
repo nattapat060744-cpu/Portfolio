@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import {
-  normalizeSettings, statsToText, textToStats, skillsToText, textToSkills,
+  normalizeSettings, skillsToText, textToSkills,
   timelineToText, textToTimeline, toolsToText, textToTools,
 } from '@/lib/utils'
 
@@ -11,7 +11,7 @@ export default function SettingsPage() {
   const sb = useMemo(() => createClient(), [])
   const [f, setF] = useState({
     name: '', tagline: '', bio: '', email: '', status: '', resume_url: '', avatar_url: '',
-    stats: '', skills: '', timeline: '', tools: '',
+    skills: '', timeline: '', tools: '',
   })
   const [msg, setMsg] = useState<{ ok: boolean; t: string } | null>(null)
   const [busy, setBusy] = useState(false)
@@ -25,7 +25,7 @@ export default function SettingsPage() {
       setF({
         name: data?.name ?? '', tagline: data?.tagline ?? '', bio: s.bio, email: s.email,
         status: data?.status ?? '', resume_url: data?.resume_url ?? '', avatar_url: data?.avatar_url ?? '',
-        stats: statsToText(s.stats), skills: skillsToText(s.skills),
+        skills: skillsToText(s.skills),
         timeline: timelineToText(s.timeline), tools: toolsToText(s.tools),
       })
     })
@@ -62,7 +62,6 @@ export default function SettingsPage() {
       status: f.status.trim() || null,
       resume_url: f.resume_url.trim() || null,
       avatar_url: f.avatar_url.trim() || null,
-      stats: textToStats(f.stats),
       skills: textToSkills(f.skills),
       timeline: textToTimeline(f.timeline),
       tools: textToTools(f.tools),
@@ -109,11 +108,6 @@ export default function SettingsPage() {
       <div className="fld">
         <label>เล่าเรื่องตัวเอง (หน้าเกี่ยวกับ)</label>
         <textarea style={{ minHeight: 160 }} value={f.bio} onChange={(e) => set('bio', e.target.value)} />
-      </div>
-      <div className="fld">
-        <label>ตัวเลขสถิติ</label>
-        <textarea value={f.stats} onChange={(e) => set('stats', e.target.value)} placeholder={'10|โปรเจกต์ที่ทำ\n3|ปีที่ฝึกเขียนโค้ด'} />
-        <small>บรรทัดละ 1 รายการ รูปแบบ: ตัวเลข|ข้อความ (ลบทั้งหมดได้ถ้าไม่ต้องการแสดง)</small>
       </div>
       <div className="fld">
         <label>ทักษะ</label>

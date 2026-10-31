@@ -136,3 +136,7 @@ footer.f{text-align:center;padding:24px 0 50px;color:var(--mute);font-size:14px}
 /* profile photo in About */
 .b-pic{position:relative;overflow:hidden;min-height:200px}
 .b-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+
+/* About bio box: white card (readable) with a colored top accent */
+.b-bio{background:var(--card);color:var(--ink);border-top:12px solid var(--c4)}
+.b-bio .bio-t{font-size:17px;line-height:1.85}
