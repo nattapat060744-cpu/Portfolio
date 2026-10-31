@@ -140,3 +140,10 @@ footer.f{text-align:center;padding:24px 0 50px;color:var(--mute);font-size:14px}
 /* About bio box: white card (readable) with a colored top accent */
 .b-bio{background:var(--card);color:var(--ink);border-top:12px solid var(--c4)}
 .b-bio .bio-t{font-size:17px;line-height:1.85}
+
+/* Skills: grouped chips */
+.b-skill{grid-column:span 6}
+.skg{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:24px;margin-top:14px}
+.skg>div{border-left:6px solid var(--ink);padding-left:16px}
+.skg h4{margin:0 0 8px;font-size:17px}
+.skg .tech{margin:0}

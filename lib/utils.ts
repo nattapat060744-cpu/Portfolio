@@ -42,7 +42,7 @@ export function normalizeSettings(d: Record<string, unknown> | null): Settings {
     bio: x.bio || '',
     email: x.email || '',
     stats: x.stats ?? [],
-    skills: x.skills ?? [],
+    skills: (x.skills ?? []).map((k) => ({ name: k.name, items: Array.isArray(k.items) ? k.items : [] })),
     timeline: x.timeline ?? [],
     tools: x.tools ?? [],
     status: x.status || 'เปิดรับโอกาส',
@@ -57,10 +57,13 @@ export const textToStats = (t: string): Settings['stats'] =>
   t.split('\n').map((l) => l.split('|')).filter((p) => p.length >= 2 && p[0].trim())
     .map((p) => ({ n: Number(p[0]) || 0, label: p.slice(1).join('|').trim() }))
 
-export const skillsToText = (a: Settings['skills']) => a.map((i) => `${i.name}|${i.level}`).join('\n')
+export const skillsToText = (a: Settings['skills']) => a.map((i) => `${i.name}|${i.items.join(', ')}`).join('\n')
 export const textToSkills = (t: string): Settings['skills'] =>
   t.split('\n').map((l) => l.split('|')).filter((p) => p.length >= 2 && p[0].trim())
-    .map((p) => ({ name: p[0].trim(), level: Math.min(100, Math.max(0, Number(p[1]) || 0)) }))
+    .map((p) => ({
+      name: p[0].trim(),
+      items: p.slice(1).join('|').split(/[,，]/).map((s) => s.trim()).filter(Boolean),
+    }))
 
 export const timelineToText = (a: Settings['timeline']) => a.map((i) => `${i.period}|${i.title}|${i.detail}`).join('\n')
 export const textToTimeline = (t: string): Settings['timeline'] =>

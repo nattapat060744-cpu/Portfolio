@@ -110,12 +110,12 @@ export default function SettingsPage() {
         <textarea style={{ minHeight: 160 }} value={f.bio} onChange={(e) => set('bio', e.target.value)} />
       </div>
       <div className="fld">
-        <label>ทักษะ</label>
-        <textarea value={f.skills} onChange={(e) => set('skills', e.target.value)} placeholder={'Web / Frontend|90\nตัดต่อวิดีโอ|75'} />
-        <small>บรรทัดละ 1 รายการ รูปแบบ: ชื่อทักษะ|ระดับ 0-100</small>
+        <label>ทักษะ (จัดเป็นกลุ่ม)</label>
+        <textarea value={f.skills} onChange={(e) => set('skills', e.target.value)} placeholder={'พัฒนาเว็บ|React, Next.js, TypeScript\nงานสร้างสรรค์|กราฟิก, ตัดต่อวิดีโอ'} />
+        <small>บรรทัดละ 1 กลุ่ม รูปแบบ: ชื่อกลุ่ม|รายการที่ 1, รายการที่ 2, รายการที่ 3</small>
       </div>
       <div className="fld">
-        <label>เครื่องมือ (แถบวิ่งและกล่องเครื่องมือ)</label>
+        <label>เครื่องมือ (แถบสีเหลืองที่วิ่งหน้าแรก)</label>
         <input type="text" value={f.tools} onChange={(e) => set('tools', e.target.value)} placeholder="TypeScript, Next.js, Figma" />
         <small>คั่นด้วยเครื่องหมายจุลภาค (,)</small>
       </div>

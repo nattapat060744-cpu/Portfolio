@@ -33,7 +33,7 @@ create table site_settings (
   bio text,
   email text,
   stats jsonb default '[]',      -- [{"n":40,"label":"..."}]
-  skills jsonb default '[]',     -- [{"name":"...","level":90}]
+  skills jsonb default '[]',     -- [{"name":"...","items":["...","..."]}]
   timeline jsonb default '[]',   -- [{"period":"...","title":"...","detail":"..."}]
   tools text[] default '{}',
   status text,                   -- short text in the round sticker on the hero
@@ -48,7 +48,7 @@ insert into site_settings (id, name, tagline, bio, email, stats, skills, timelin
   'แก้ข้อความแนะนำตัวได้ที่หน้า /admin/settings',
   'hello@example.com',
   '[{"n":40,"label":"โปรเจกต์ที่ส่งมอบ"},{"n":5,"label":"ปีประสบการณ์"},{"n":25,"label":"ลูกค้าและทีม"},{"n":120,"label":"วิดีโอและงานกราฟิก"}]',
-  '[{"name":"Web / Frontend","level":92},{"name":"ระบบหลังบ้านและฐานข้อมูล","level":85},{"name":"ออกแบบกราฟิก","level":80},{"name":"ตัดต่อวิดีโอและโมชัน","level":75}]',
+  '[{"name":"พัฒนาเว็บและแอป","items":["React","Next.js","TypeScript","Tailwind CSS"]},{"name":"ระบบหลังบ้านและฐานข้อมูล","items":["Supabase","PostgreSQL","SQL"]}]',
   '[{"period":"2025 – ปัจจุบัน","title":"Freelance Developer & Creative","detail":"รับงานเว็บ ระบบ และงานภาพเคลื่อนไหว"}]',
   array['TypeScript','Next.js','React','Tailwind','Supabase','SQL','Figma','Photoshop','Premiere Pro','After Effects']
 );

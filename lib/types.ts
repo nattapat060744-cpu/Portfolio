@@ -25,7 +25,7 @@ export interface Settings {
   bio: string
   email: string
   stats: { n: number; label: string }[]
-  skills: { name: string; level: number }[]
+  skills: { name: string; items: string[] }[]
   timeline: { period: string; title: string; detail: string }[]
   tools: string[]
   status: string

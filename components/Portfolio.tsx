@@ -272,14 +272,15 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
             <div className="box b-pic">{s.avatar_url ? <img src={s.avatar_url} alt={s.name} /> : s.name.charAt(0)}</div>
             {s.skills.length > 0 && (
               <div className="box b-skill">
-                <h3 style={{ marginTop: 0 }}>ทักษะ</h3>
-                {s.skills.map((k, i) => <Bar key={i} name={k.name} level={k.level} />)}
-              </div>
-            )}
-            {s.tools.length > 0 && (
-              <div className="box b-tool">
-                <h3 style={{ marginTop: 0 }}>เครื่องมือที่ใช้</h3>
-                <div className="tech">{s.tools.map((t, i) => <span key={i}>{t}</span>)}</div>
+                <h3 style={{ marginTop: 0 }}>ทักษะและสิ่งที่ทำได้</h3>
+                <div className="skg">
+                  {s.skills.map((k, i) => (
+                    <div key={i} style={{ borderLeftColor: `var(--c${(i % 5) + 1})` }}>
+                      <h4>{k.name}</h4>
+                      <div className="tech">{k.items.map((t, j) => <span key={j}>{t}</span>)}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
