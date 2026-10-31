@@ -3,7 +3,7 @@ import { publicClient } from '@/lib/supabase/public'
 import { normalizeSettings } from '@/lib/utils'
 import type { Project } from '@/lib/types'
 
-export const dynamic = 'force-dynamic' // always read fresh data from the database
+export const dynamic = 'force-dynamic'
 
 export default async function Home() {
   const sb = publicClient()
