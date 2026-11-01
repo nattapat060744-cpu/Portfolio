@@ -22,6 +22,9 @@ create table projects (
   role text,
   is_published boolean default true,
   sort_order int default 0,
+  goal text,                     -- what the project is for
+  contribution text,             -- what you did yourself
+  outcome text,                  -- result / what you learned
   created_at timestamptz default now()
 );
 
@@ -38,7 +41,12 @@ create table site_settings (
   tools text[] default '{}',
   status text,                   -- short text in the round sticker on the hero
   resume_url text,               -- link to resume file
-  avatar_url text                -- profile photo shown in the About section
+  avatar_url text,               -- profile photo shown in the About section
+  facts jsonb default '[]',      -- [{"label":"พื้นที่","value":"กรุงเทพฯ"}]
+  learning text[] default '{}',  -- things currently learning
+  contact_note text,
+  looking_for text[] default '{}',  -- roles / things you are looking for
+  socials jsonb default '[]'     -- [{"label":"GitHub","url":"https://..."}]
 );
 
 insert into site_settings (id, name, tagline, bio, email, stats, skills, timeline, tools) values (

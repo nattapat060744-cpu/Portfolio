@@ -147,3 +147,93 @@ footer.f{text-align:center;padding:24px 0 50px;color:var(--mute);font-size:14px}
 .skg>div{border-left:6px solid var(--ink);padding-left:16px}
 .skg h4{margin:0 0 8px;font-size:17px}
 .skg .tech{margin:0}
+
+/* ---------- extra effects ---------- */
+nav a.on{background:var(--c2);color:var(--on)}
+.sticker{transition:translate .25s ease-out}
+.s1{translate:calc(var(--mx,0) * -26px) calc(var(--my,0) * -26px)}
+.s2{translate:calc(var(--mx,0) * 40px) calc(var(--my,0) * 34px)}
+.s3{translate:calc(var(--mx,0) * -48px) calc(var(--my,0) * 30px)}
+.card{animation:pop .5s both;transition:transform .15s ease-out,box-shadow .18s}
+@keyframes pop{from{opacity:0;transform:translateY(20px) scale(.97)}}
+.tech span{transition:.2s}
+.tech span:hover{transform:translateY(-3px) rotate(-3deg);background:var(--c2);color:var(--on)}
+.marq:hover div{animation-play-state:paused}
+.totop{position:fixed;right:18px;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:48px;height:48px;border-radius:50%;border:2px solid var(--ink);background:var(--c2);color:var(--on);font-size:22px;font-weight:800;cursor:pointer;box-shadow:3px 3px 0 var(--ink);opacity:0;pointer-events:none;transform:translateY(20px);transition:.25s;z-index:80;font-family:inherit}
+.totop.show{opacity:1;pointer-events:auto;transform:none}
+.cf{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:300;animation:cf .9s ease-out forwards}
+@keyframes cf{to{transform:translate(var(--dx),var(--dy)) rotate(var(--rot));opacity:0}}
+
+/* ---------- About extras ---------- */
+.facts{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.facts span{background:var(--bg);border:2px solid var(--ink);border-radius:99px;padding:2px 14px;font-size:14px}
+.facts b{color:var(--c1)}
+.orb{position:absolute;width:44px;height:44px;border-radius:50%;border:2px solid var(--ink);background:var(--card);display:grid;place-items:center;font-size:22px;animation:orb 4s ease-in-out infinite;z-index:2}
+.o1{left:10px;top:10px}.o2{right:12px;top:40%;animation-delay:-1.3s}.o3{left:22%;bottom:10px;animation-delay:-2.6s}
+@keyframes orb{50%{transform:translateY(-10px) rotate(8deg)}}
+.b-pic img{transition:transform .4s}
+.b-pic:hover img{transform:scale(1.06) rotate(-1deg)}
+.b-learn{grid-column:span 6;background:var(--c2);color:var(--on)}
+.b-learn h3{margin-top:0}
+.b-learn .dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--c1);border:2px solid var(--ink);margin-right:8px;animation:pulse 1.6s infinite}
+.b-learn .tech{margin-bottom:0}
+.b-learn .tech span{background:#fff;color:#14131a}
+.b-learn .tech span:hover{background:var(--c1);color:#14131a}
+
+/* ---------- timeline + project detail ---------- */
+.tag-b{display:inline-block;margin-left:8px;font-size:12px;font-weight:700;padding:1px 10px;border:2px solid var(--ink);border-radius:99px;color:var(--on);vertical-align:middle}
+.rv.in .tl>div{animation:tlin .6s both}
+@keyframes tlin{from{opacity:0;transform:translateX(-24px)}}
+.pj{margin:14px 0}
+.pj h4{margin:0 0 4px;font-size:15px;color:var(--c1)}
+.pj p{margin:0}
+
+/* ---------- contact extras ---------- */
+.cta2{position:relative;overflow:hidden}
+.cta2>*:not(.cb){position:relative;z-index:1}
+.cb{position:absolute;font-size:34px;animation:orb 5s ease-in-out infinite;opacity:.9}
+.cb1{left:8%;top:18%}.cb2{right:10%;top:26%;animation-delay:-1.5s}.cb3{left:18%;bottom:14%;animation-delay:-3s}
+.look{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center;margin:14px 0}
+.look>span:first-child{font-weight:700}
+.look .lk{background:#fff;color:#14131a;border:2px solid var(--ink);border-radius:99px;padding:0 14px;font-size:14px;font-weight:600}
+.mail{cursor:pointer;border-bottom:3px dashed var(--ink);padding-bottom:1px}
+.mail:hover{background:var(--c2);color:var(--on)}
+.clk{font-size:14px;margin:18px 0 0}
+.live{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c3);border:2px solid var(--ink);margin-right:8px;animation:pulse 1.6s infinite}
+.cta2 .btn:hover{transform:translate(-2px,-2px) rotate(-1.5deg)}
+
+/* ---------- login page ---------- */
+.login-card{max-width:440px;margin:40px auto;background:var(--card);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--sh);padding:30px 28px}
+.login-card h1{margin:0;font-size:28px}
+.login-ico{font-size:40px;line-height:1;margin-bottom:8px}
+.login-sub{color:var(--mute);margin:4px 0 22px}
+.pw{position:relative}
+.pw input{padding-right:58px!important}
+.eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:2px solid var(--ink);border-radius:10px;background:var(--c2);color:var(--on);display:grid;place-items:center;cursor:pointer;padding:0}
+.eye:hover{background:var(--c3)}
+.fld small.warn{color:var(--c1);font-weight:600}
+.login-foot{font-size:14px;margin:18px 0 0;text-align:center}
+.login-foot a{color:var(--ink)}
+.btn:disabled{opacity:.6;cursor:wait}
+
+/* ---------- more floating shapes: hero ---------- */
+.ex{translate:calc(var(--mx,0) * var(--k,20) * 1px) calc(var(--my,0) * var(--k,20) * 1px)}
+.s4{width:42px;height:42px;background:var(--c1);border-radius:50%;right:17%;top:28px;--k:-36;animation:orb 4s ease-in-out infinite}
+.s5{width:78px;height:78px;background:transparent;border:7px solid var(--c1);border-radius:50%;right:26%;top:120px;--k:30;animation:orb 6s ease-in-out infinite}
+.s6{width:46px;height:46px;background:var(--c5);border-radius:6px;right:3%;top:175px;--k:-44;animation-duration:12s}
+.s7{border:0;background:none;font-size:64px;line-height:1;color:var(--c1);right:31%;top:40px;--k:28;animation-duration:10s}
+.s8{width:84px;height:42px;background:var(--c3);border-radius:84px 84px 0 0;right:13%;top:345px;--k:-26;animation:orb 5s ease-in-out infinite}
+.s9{border:0;background:none;font-size:58px;line-height:1;color:var(--c2);-webkit-text-stroke:2px var(--ink);right:34%;top:260px;--k:40;animation-duration:16s}
+.s10{width:26px;height:26px;background:var(--c4);border-radius:50%;right:1%;top:335px;--k:50;animation:orb 3.4s ease-in-out infinite}
+@media(max-width:720px){.ex{display:none}}
+
+/* ---------- floating shapes: About ---------- */
+#about{position:relative}
+.deco{position:absolute;left:0;right:0;top:0;height:150px;pointer-events:none;z-index:0}
+.bento{position:relative;z-index:1}
+.ab1{width:96px;height:96px;background:var(--c2);border-radius:50%;right:2%;top:14px;font-size:15px;text-align:center;line-height:1.25}
+.ab2{width:52px;height:52px;background:var(--c4);border-radius:12px;right:17%;top:64px;animation-duration:9s}
+.ab3{width:0;height:0;border:0;right:10%;top:96px;border-left:26px solid transparent;border-right:26px solid transparent;border-bottom:46px solid var(--c3);animation-duration:11s}
+.ab4{width:60px;height:60px;background:transparent;border:7px solid var(--c1);border-radius:50%;right:25%;top:22px;animation:orb 5s ease-in-out infinite}
+.ab5{border:0;background:none;font-size:48px;line-height:1;color:var(--c5);-webkit-text-stroke:2px var(--ink);right:33%;top:74px;animation-duration:15s}
+@media(max-width:720px){.ab3,.ab4,.ab5{display:none}.ab1{width:70px;height:70px;font-size:12px}}

@@ -11,6 +11,7 @@ const empty = {
   title: '', slug: '', category: 'web', description: '', tech: '',
   cover_url: '', youtube_url: '', demo_url: '', github_url: '',
   year: '', role: '', sort_order: '0', is_published: true,
+  goal: '', contribution: '', outcome: '',
 }
 
 export default function ProjectForm({ params }: { params: { id: string } }) {
@@ -34,6 +35,7 @@ export default function ProjectForm({ params }: { params: { id: string } }) {
         tech: p.tech.join(', '), cover_url: p.cover_url ?? '', youtube_url: p.youtube_url ?? '',
         demo_url: p.demo_url ?? '', github_url: p.github_url ?? '', year: p.year ? String(p.year) : '',
         role: p.role ?? '', sort_order: String(p.sort_order), is_published: p.is_published,
+        goal: p.goal ?? '', contribution: p.contribution ?? '', outcome: p.outcome ?? '',
       })
     })
   }, [isNew, params.id, sb])
@@ -64,6 +66,9 @@ export default function ProjectForm({ params }: { params: { id: string } }) {
       github_url: f.github_url || null,
       year: f.year ? Number(f.year) : null,
       role: f.role || null,
+      goal: f.goal || null,
+      contribution: f.contribution || null,
+      outcome: f.outcome || null,
       sort_order: Number(f.sort_order) || 0,
       is_published: f.is_published,
     }
@@ -105,6 +110,19 @@ export default function ProjectForm({ params }: { params: { id: string } }) {
       <div className="fld">
         <label>รายละเอียด</label>
         <textarea value={f.description} onChange={(e) => set('description', e.target.value)} />
+      </div>
+      <div className="fld">
+        <label>🎯 ทำเพื่ออะไร (วัตถุประสงค์ / ปัญหาที่แก้)</label>
+        <textarea value={f.goal} onChange={(e) => set('goal', e.target.value)} />
+      </div>
+      <div className="fld">
+        <label>🛠 ส่วนที่คุณทำเอง</label>
+        <textarea value={f.contribution} onChange={(e) => set('contribution', e.target.value)} />
+        <small>ถ้าทำเป็นทีม ระบุให้ชัดว่าส่วนไหนเป็นของคุณ</small>
+      </div>
+      <div className="fld">
+        <label>✅ ผลลัพธ์ / สิ่งที่ได้เรียนรู้</label>
+        <textarea value={f.outcome} onChange={(e) => set('outcome', e.target.value)} />
       </div>
 
       <div className="fld">

@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { ReactNode } from 'react'
+import type { MouseEvent as ReactMouseEvent, ReactNode } from 'react'
 import type { Project, Settings } from '@/lib/types'
-import { CATS, coverSrc, ytId } from '@/lib/utils'
+import { CATS, coverSrc, socialIcon, tagMeta, ytId } from '@/lib/utils'
 
 const WORDS = ['เว็บ', 'แอป', 'ระบบ', 'กราฟิก', 'วิดีโอ']
 const WORD_COLORS = [1, 3, 4, 2, 5]
@@ -88,6 +88,45 @@ function Cover({ p }: { p: Project }) {
   return <div className="cover" style={{ background: bg }}>{inner}</div>
 }
 
+function PjBlock({ h, v }: { h: string; v: string | null }) {
+  if (!v) return null
+  return (
+    <div className="pj">
+      <h4>{h}</h4>
+      <p className="bio-t">{v}</p>
+    </div>
+  )
+}
+
+function tilt(e: ReactMouseEvent<HTMLElement>) {
+  const c = e.currentTarget
+  const r = c.getBoundingClientRect()
+  const x = (e.clientX - r.left) / r.width - 0.5
+  const y = (e.clientY - r.top) / r.height - 0.5
+  c.style.transform = `perspective(800px) rotateY(${x * 7}deg) rotateX(${-y * 7}deg) translate(-4px, -4px)`
+}
+function untilt(e: ReactMouseEvent<HTMLElement>) {
+  e.currentTarget.style.transform = ''
+}
+function heroMove(e: ReactMouseEvent<HTMLElement>) {
+  const el = e.currentTarget
+  const r = el.getBoundingClientRect()
+  el.style.setProperty('--mx', String((e.clientX - r.left) / r.width - 0.5))
+  el.style.setProperty('--my', String((e.clientY - r.top) / r.height - 0.5))
+}
+function burst(x: number, y: number) {
+  const colors = ['#ff4d6d', '#ffd23f', '#2ec4b6', '#9b87ff', '#ff9f1c']
+  for (let i = 0; i < 24; i++) {
+    const d = document.createElement('i')
+    const a = Math.random() * Math.PI * 2
+    const r = 60 + Math.random() * 100
+    d.className = 'cf'
+    d.style.cssText = `left:${x}px;top:${y}px;background:${colors[i % 5]};--dx:${Math.cos(a) * r}px;--dy:${Math.sin(a) * r - 40}px;--rot:${Math.random() * 720}deg`
+    document.body.appendChild(d)
+    setTimeout(() => d.remove(), 1000)
+  }
+}
+
 export default function Portfolio({ projects, settings: s }: { projects: Project[]; settings: Settings }) {
   const [filter, setFilter] = useState('all')
   const [q, setQ] = useState('')
@@ -95,6 +134,9 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
   const [wi, setWi] = useState(0)
   const [swap, setSwap] = useState(false)
   const [toast, setToast] = useState('')
+  const [active, setActive] = useState('')
+  const [showTop, setShowTop] = useState(false)
+  const [clock, setClock] = useState('')
   const barRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -111,6 +153,7 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
   useEffect(() => {
     const on = () => {
       const h = document.documentElement
+      setShowTop(h.scrollTop > 600)
       if (barRef.current) {
         barRef.current.style.width = (h.scrollTop / Math.max(h.scrollHeight - h.clientHeight, 1)) * 100 + '%'
       }
@@ -120,7 +163,14 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
   }, [])
 
   useEffect(() => {
-    const k = (e: KeyboardEvent) => e.key === 'Escape' && setSel(null)
+    const k = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSel(null)
+      const t = e.target as HTMLElement
+      if (e.key === '/' && t.tagName !== 'INPUT' && t.tagName !== 'TEXTAREA') {
+        e.preventDefault()
+        document.getElementById('q')?.focus()
+      }
+    }
     window.addEventListener('keydown', k)
     return () => window.removeEventListener('keydown', k)
   }, [])
@@ -128,6 +178,28 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
   useEffect(() => {
     document.body.style.overflow = sel ? 'hidden' : ''
   }, [sel])
+
+  // highlight the nav link of the section currently on screen
+  useEffect(() => {
+    const els = ['work', 'about', 'path', 'hire']
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => !!el)
+    const io = new IntersectionObserver(
+      (es) => es.forEach((e) => e.isIntersecting && setActive(e.target.id)),
+      { rootMargin: '-40% 0px -55% 0px' }
+    )
+    els.forEach((el) => io.observe(el))
+    return () => io.disconnect()
+  }, [])
+
+  // live Thailand time in the contact section (useful for people in other time zones)
+  useEffect(() => {
+    const t = () =>
+      setClock(new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' }))
+    t()
+    const id = setInterval(t, 30000)
+    return () => clearInterval(id)
+  }, [])
 
   const list = useMemo(() => {
     const t = q.trim().toLowerCase()
@@ -158,7 +230,8 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
     setTimeout(() => setToast(''), 2000)
   }
 
-  const copyEmail = async () => {
+  const copyEmail = async (e: ReactMouseEvent) => {
+    burst(e.clientX, e.clientY)
     try {
       await navigator.clipboard.writeText(s.email)
       flash('คัดลอกอีเมลแล้ว ✓')
@@ -182,20 +255,27 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
         <div className="wrap">
           <a className="logo" href="#top">{s.name}<i /></a>
           <nav>
-            <a href="#work">ผลงาน</a>
-            <a href="#about">เกี่ยวกับ</a>
-            {s.timeline.length > 0 && <a href="#path">เส้นทาง</a>}
-            {s.email && <a href="#hire">ติดต่อ</a>}
+            <a href="#work" className={active === 'work' ? 'on' : ''}>ผลงาน</a>
+            <a href="#about" className={active === 'about' ? 'on' : ''}>เกี่ยวกับ</a>
+            {s.timeline.length > 0 && <a href="#path" className={active === 'path' ? 'on' : ''}>เส้นทาง</a>}
+            {(s.email || s.socials.length > 0) && <a href="#hire" className={active === 'hire' ? 'on' : ''}>ติดต่อ</a>}
             <button className="btn alt" onClick={toggleTheme} aria-label="สลับโหมด">◐</button>
           </nav>
         </div>
       </header>
 
       <main className="wrap" id="top">
-        <div className="hero">
+        <div className="hero" onMouseMove={heroMove}>
           <div className="sticker s1">{s.status}</div>
           <div className="sticker s2" />
           <div className="sticker s3" />
+          <div className="sticker ex s4" />
+          <div className="sticker ex s5" />
+          <div className="sticker ex s6" />
+          <div className="sticker ex s7">+</div>
+          <div className="sticker ex s8" />
+          <div className="sticker ex s9">✦</div>
+          <div className="sticker ex s10" />
           <span className="badge">👋 สวัสดีครับ ผม{s.name}</span>
           <h1>
             ชอบสร้าง
@@ -243,10 +323,17 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
           </div>
           <div className="grid">
             {list.length === 0 && <div className="empty">ยังไม่มีผลงานในหมวดนี้ หรือไม่พบคำที่ค้นหา</div>}
-            {list.map((p) => {
+            {list.map((p, idx) => {
               const d = p.description ?? ''
               return (
-                <button className="card" key={p.id} onClick={() => setSel(p)}>
+                <button
+                  className="card"
+                  key={p.id}
+                  onClick={() => setSel(p)}
+                  onMouseMove={tilt}
+                  onMouseLeave={untilt}
+                  style={{ animationDelay: `${Math.min(idx, 8) * 60}ms` }}
+                >
                   <Cover p={p} />
                   <div className="cbody">
                     <span className="cat" style={{ background: `var(${(CATS[p.category] ?? CATS.web)[1]})` }}>
@@ -262,14 +349,31 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
         </Reveal>
 
         <Reveal id="about">
+          <div className="deco" aria-hidden="true">
+            <div className="sticker ab1">สวัสดี<br />👋</div>
+            <div className="sticker ab2" />
+            <div className="sticker ab3" />
+            <div className="sticker ab4" />
+            <div className="sticker ab5">✦</div>
+          </div>
           <div className="eyebrow">เกี่ยวกับ</div>
           <h2>เกี่ยวกับฉัน</h2>
           <div className="bento">
             <div className="box b-bio">
               <h3 style={{ marginTop: 0, fontSize: 24 }}>เล่าเรื่องตัวเอง</h3>
               <p className="bio-t">{s.bio || 'ยังไม่ได้ใส่ข้อความแนะนำตัว'}</p>
+              {s.facts.length > 0 && (
+                <div className="facts">
+                  {s.facts.map((f, i) => <span key={i}><b>{f.label}</b> {f.value}</span>)}
+                </div>
+              )}
             </div>
-            <div className="box b-pic">{s.avatar_url ? <img src={s.avatar_url} alt={s.name} /> : s.name.charAt(0)}</div>
+            <div className="box b-pic">
+              {s.avatar_url ? <img src={s.avatar_url} alt={s.name} /> : s.name.charAt(0)}
+              <span className="orb o1">💻</span>
+              <span className="orb o2">🎨</span>
+              <span className="orb o3">🎬</span>
+            </div>
             {s.skills.length > 0 && (
               <div className="box b-skill">
                 <h3 style={{ marginTop: 0 }}>ทักษะและสิ่งที่ทำได้</h3>
@@ -283,6 +387,12 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
                 </div>
               </div>
             )}
+            {s.learning.length > 0 && (
+              <div className="box b-learn">
+                <h3><span className="dot" />กำลังเรียนรู้ / สนใจต่อยอด</h3>
+                <div className="tech">{s.learning.map((t, i) => <span key={i}>{t}</span>)}</div>
+              </div>
+            )}
           </div>
         </Reveal>
 
@@ -291,25 +401,51 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
             <div className="eyebrow">เส้นทาง</div>
             <h2>การศึกษาและประสบการณ์</h2>
             <div className="tl">
-              {s.timeline.map((t, i) => (
-                <div key={i}><small>{t.period}</small><b>{t.title}</b><p>{t.detail}</p></div>
-              ))}
+              {s.timeline.map((t, i) => {
+                const [emo, col] = tagMeta(t.tag)
+                return (
+                  <div key={i} style={{ animationDelay: `${i * 120}ms` }}>
+                    <small>{t.period}</small>
+                    <b>{t.title}</b>
+                    {t.tag && <span className="tag-b" style={{ background: `var(${col})` }}>{emo} {t.tag}</span>}
+                    {t.detail && <p>{t.detail}</p>}
+                  </div>
+                )
+              })}
             </div>
           </Reveal>
         )}
 
-        {s.email && (
+        {(s.email || s.socials.length > 0) && (
           <Reveal id="hire">
             <div className="cta2">
+              <span className="cb cb1">✉️</span>
+              <span className="cb cb2">💬</span>
+              <span className="cb cb3">✨</span>
               <h2>สนใจติดต่อ?</h2>
-              <p>หากสนใจผลงานหรืออยากพูดคุยเพิ่มเติม ติดต่อได้ทางอีเมลครับ</p>
-              <p><b>{s.email}</b></p>
+              <p>{s.contact_note || 'หากสนใจผลงานหรืออยากพูดคุยเพิ่มเติม ติดต่อได้ตามช่องทางด้านล่างครับ'}</p>
+              {s.looking_for.length > 0 && (
+                <div className="look">
+                  <span>กำลังมองหา</span>
+                  {s.looking_for.map((t, i) => <span className="lk" key={i}>{t}</span>)}
+                </div>
+              )}
+              {s.email && <p><b className="mail" onClick={copyEmail} title="คลิกเพื่อคัดลอก">{s.email}</b></p>}
               <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-                <button className="btn alt" onClick={copyEmail}>คัดลอกอีเมล</button>
+                {s.email && (
+                  <a className="btn" href={`mailto:${s.email}?subject=${encodeURIComponent('สนใจผลงานของคุณ')}`}>✉️ ส่งอีเมลหาฉัน</a>
+                )}
+                {s.email && <button className="btn alt" onClick={copyEmail}>คัดลอกอีเมล</button>}
                 {s.resume_url && (
                   <a className="btn alt" href={s.resume_url} target="_blank" rel="noopener noreferrer">ดาวน์โหลดเรซูเม่</a>
                 )}
+                {s.socials.map((x, i) => (
+                  <a key={i} className="btn alt" href={x.url} target={x.url.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer">{socialIcon(x.label)} {x.label}</a>
+                ))}
               </div>
+              {clock && (
+                <p className="clk"><span className="live" />เวลาที่ประเทศไทยตอนนี้ {clock} น.</p>
+              )}
             </div>
           </Reveal>
         )}
@@ -334,6 +470,9 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
                 {sel.role && <span>บทบาท: {sel.role}</span>}
               </div>
               {sel.description && <p className="bio-t">{sel.description}</p>}
+              <PjBlock h="🎯 ทำเพื่ออะไร" v={sel.goal} />
+              <PjBlock h="🛠 ส่วนที่ฉันทำ" v={sel.contribution} />
+              <PjBlock h="✅ ผลลัพธ์ / สิ่งที่ได้เรียนรู้" v={sel.outcome} />
               {sel.tech.length > 0 && <div className="tech">{sel.tech.map((t, i) => <span key={i}>{t}</span>)}</div>}
               {vid && (
                 <div className="yt">
@@ -354,6 +493,14 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
           </div>
         </div>
       )}
+
+      <button
+        className={'totop' + (showTop ? ' show' : '')}
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="กลับขึ้นด้านบน"
+      >
+        ↑
+      </button>
 
       <div id="toast" className={toast ? 'show' : ''}>{toast}</div>
     </>

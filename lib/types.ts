@@ -14,6 +14,9 @@ export interface Project {
   github_url: string | null
   year: number | null
   role: string | null
+  goal: string | null
+  contribution: string | null
+  outcome: string | null
   is_published: boolean
   sort_order: number
   created_at: string
@@ -26,9 +29,14 @@ export interface Settings {
   email: string
   stats: { n: number; label: string }[]
   skills: { name: string; items: string[] }[]
-  timeline: { period: string; title: string; detail: string }[]
+  timeline: { period: string; title: string; detail: string; tag: string }[]
   tools: string[]
   status: string
   resume_url: string
   avatar_url: string
+  socials: { label: string; url: string }[]
+  facts: { label: string; value: string }[]
+  learning: string[]
+  contact_note: string
+  looking_for: string[]
 }
