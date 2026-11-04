@@ -364,3 +364,10 @@ button.ad-link{background:none;font-family:inherit;cursor:pointer;text-align:lef
 .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:14px 0}
 .gal img{width:100%;aspect-ratio:16/10;object-fit:cover;border:2px solid var(--ink);border-radius:10px;display:block;transition:transform .2s}
 .gal a:hover img{transform:scale(1.03)}
+
+/* ---------- admin fix: labels with type tags + narrow sidebar ---------- */
+.fld label{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.fld label .kd{margin-left:0;flex:none;white-space:nowrap}
+.g2{align-items:start}
+.ad-grid>div:nth-child(2) .g2{grid-template-columns:minmax(0,1fr)}
+.ad-ch{margin-bottom:10px}
