@@ -137,18 +137,19 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
   const [active, setActive] = useState('')
   const [showTop, setShowTop] = useState(false)
   const [clock, setClock] = useState('')
+  const words = s.hero_words.length > 0 ? s.hero_words : WORDS
   const barRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const id = setInterval(() => {
       setSwap(true)
       setTimeout(() => {
-        setWi((i) => (i + 1) % WORDS.length)
+        setWi((i) => (i + 1) % words.length)
         setSwap(false)
       }, 220)
     }, 2200)
     return () => clearInterval(id)
-  }, [])
+  }, [words.length])
 
   useEffect(() => {
     const on = () => {
@@ -181,7 +182,7 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
 
   // highlight the nav link of the section currently on screen
   useEffect(() => {
-    const els = ['work', 'about', 'path', 'hire']
+    const els = ['work', 'about', 'path', 'certs', 'hire']
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => !!el)
     const io = new IntersectionObserver(
@@ -258,6 +259,7 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
             <a href="#work" className={active === 'work' ? 'on' : ''}>ผลงาน</a>
             <a href="#about" className={active === 'about' ? 'on' : ''}>เกี่ยวกับ</a>
             {s.timeline.length > 0 && <a href="#path" className={active === 'path' ? 'on' : ''}>เส้นทาง</a>}
+            {s.certificates.length > 0 && <a href="#certs" className={active === 'certs' ? 'on' : ''}>ใบรับรอง</a>}
             {(s.email || s.socials.length > 0) && <a href="#hire" className={active === 'hire' ? 'on' : ''}>ติดต่อ</a>}
             <button className="btn alt" onClick={toggleTheme} aria-label="สลับโหมด">◐</button>
           </nav>
@@ -279,8 +281,8 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
           <span className="badge">👋 สวัสดีครับ ผม{s.name}</span>
           <h1>
             ชอบสร้าง
-            <span className={'word' + (swap ? ' sw' : '')} style={{ background: `var(--c${WORD_COLORS[wi]})` }}>
-              {WORDS[wi]}
+            <span className={'word' + (swap ? ' sw' : '')} style={{ background: `var(--c${WORD_COLORS[wi % WORD_COLORS.length]})` }}>
+              {words[wi % words.length]}
             </span>
             <br />และลงมือทำจริง
           </h1>
@@ -339,6 +341,7 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
                     <span className="cat" style={{ background: `var(${(CATS[p.category] ?? CATS.web)[1]})` }}>
                       {(CATS[p.category] ?? CATS.web)[0]}
                     </span>
+                    {p.is_featured && <span className="cat feat">⭐ เด่น</span>}
                     <h3>{p.title}</h3>
                     <p>{d.length > 70 ? d.slice(0, 70) + '…' : d}</p>
                   </div>
@@ -393,6 +396,12 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
                 <div className="tech">{s.learning.map((t, i) => <span key={i}>{t}</span>)}</div>
               </div>
             )}
+            {s.interests.length > 0 && (
+              <div className="box b-int">
+                <h3 style={{ marginTop: 0 }}>สิ่งที่สนใจ</h3>
+                <div className="tech">{s.interests.map((t, i) => <span key={i}>{t}</span>)}</div>
+              </div>
+            )}
           </div>
         </Reveal>
 
@@ -412,6 +421,25 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
                   </div>
                 )
               })}
+            </div>
+          </Reveal>
+        )}
+
+        {s.certificates.length > 0 && (
+          <Reveal id="certs">
+            <div className="eyebrow">ใบรับรอง</div>
+            <h2>ใบรับรองและรางวัล</h2>
+            <div className="certs">
+              {s.certificates.map((c, i) => (
+                <div className="cert" key={i}>
+                  {c.year && <div className="cy">{c.year}</div>}
+                  <b>{c.title}</b>
+                  {c.issuer && <p>{c.issuer}</p>}
+                  {/^https?:\/\//i.test(c.url) && (
+                    <a href={c.url} target="_blank" rel="noopener noreferrer">ดูใบรับรอง ↗</a>
+                  )}
+                </div>
+              ))}
             </div>
           </Reveal>
         )}
@@ -468,11 +496,22 @@ export default function Portfolio({ projects, settings: s }: { projects: Project
               <div className="meta">
                 {sel.year && <span>ปี {sel.year}</span>}
                 {sel.role && <span>บทบาท: {sel.role}</span>}
+                {sel.status && <span>สถานะ: {sel.status}</span>}
+                {sel.team && <span>{sel.team}</span>}
               </div>
               {sel.description && <p className="bio-t">{sel.description}</p>}
               <PjBlock h="🎯 ทำเพื่ออะไร" v={sel.goal} />
               <PjBlock h="🛠 ส่วนที่ฉันทำ" v={sel.contribution} />
               <PjBlock h="✅ ผลลัพธ์ / สิ่งที่ได้เรียนรู้" v={sel.outcome} />
+              {(sel.gallery ?? []).length > 0 && (
+                <div className="gal">
+                  {(sel.gallery ?? []).map((u, i) => (
+                    <a key={i} href={u} target="_blank" rel="noopener noreferrer">
+                      <img src={u} alt={`${sel.title} ${i + 1}`} loading="lazy" />
+                    </a>
+                  ))}
+                </div>
+              )}
               {sel.tech.length > 0 && <div className="tech">{sel.tech.map((t, i) => <span key={i}>{t}</span>)}</div>}
               {vid && (
                 <div className="yt">

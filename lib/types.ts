@@ -17,6 +17,9 @@ export interface Project {
   goal: string | null
   contribution: string | null
   outcome: string | null
+  is_featured: boolean
+  status: string | null
+  team: string | null
   is_published: boolean
   sort_order: number
   created_at: string
@@ -39,4 +42,9 @@ export interface Settings {
   learning: string[]
   contact_note: string
   looking_for: string[]
+  hero_words: string[]
+  interests: string[]
+  certificates: { title: string; issuer: string; year: string; url: string }[]
+  seo_title: string
+  seo_description: string
 }

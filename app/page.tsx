@@ -11,11 +11,12 @@ export const fetchCache = 'force-no-store'
 export async function generateMetadata(): Promise<Metadata> {
   const { data } = await publicClient().from('site_settings').select('*').eq('id', 1).maybeSingle()
   const s = normalizeSettings(data)
-  const title = `${s.name} | Portfolio`
+  const title = s.seo_title || `${s.name} | Portfolio`
+  const description = s.seo_description || s.tagline
   return {
     title,
-    description: s.tagline,
-    openGraph: { title, description: s.tagline, type: 'website', images: s.avatar_url ? [s.avatar_url] : [] },
+    description,
+    openGraph: { title, description, type: 'website', images: s.avatar_url ? [s.avatar_url] : [] },
   }
 }
 

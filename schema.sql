@@ -25,6 +25,9 @@ create table projects (
   goal text,                     -- what the project is for
   contribution text,             -- what you did yourself
   outcome text,                  -- result / what you learned
+  is_featured boolean default false,
+  status text,                   -- finished / in progress / prototype
+  team text,                     -- solo / team
   created_at timestamptz default now()
 );
 
@@ -46,6 +49,11 @@ create table site_settings (
   learning text[] default '{}',  -- things currently learning
   contact_note text,
   looking_for text[] default '{}',  -- roles / things you are looking for
+  hero_words text[] default '{}',   -- words that rotate in the hero heading
+  interests text[] default '{}',    -- hobbies / interests
+  certificates jsonb default '[]',   -- [{"title":"","issuer":"","year":"","url":""}]
+  seo_title text,                   -- title when the link is shared
+  seo_description text,
   socials jsonb default '[]'     -- [{"label":"GitHub","url":"https://..."}]
 );
 

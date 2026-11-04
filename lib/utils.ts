@@ -34,11 +34,14 @@ export function slugify(s: string): string {
   return slug || 'p-' + Date.now().toString(36)
 }
 
+export const DEFAULT_TAGLINE =
+  'นักพัฒนาและครีเอทีฟที่ทำได้ตั้งแต่ระบบหลังบ้าน เว็บ แอป ไปจนถึงงานกราฟิกและตัดต่อวิดีโอ'
+
 export function normalizeSettings(d: Record<string, unknown> | null): Settings {
   const x = (d ?? {}) as Partial<Settings>
   return {
     name: x.name || 'ชื่อคุณ',
-    tagline: x.tagline || 'นักพัฒนาและครีเอทีฟที่ทำได้ตั้งแต่ระบบหลังบ้าน เว็บ แอป ไปจนถึงงานกราฟิกและตัดต่อวิดีโอ',
+    tagline: x.tagline || DEFAULT_TAGLINE,
     bio: x.bio || '',
     email: x.email || '',
     stats: x.stats ?? [],
@@ -53,6 +56,13 @@ export function normalizeSettings(d: Record<string, unknown> | null): Settings {
     learning: x.learning ?? [],
     contact_note: x.contact_note || '',
     looking_for: x.looking_for ?? [],
+    hero_words: x.hero_words ?? [],
+    interests: x.interests ?? [],
+    certificates: (Array.isArray(x.certificates) ? x.certificates : []).map((c) => ({
+      title: c.title ?? '', issuer: c.issuer ?? '', year: c.year ?? '', url: c.url ?? '',
+    })),
+    seo_title: x.seo_title || '',
+    seo_description: x.seo_description || '',
   }
 }
 
