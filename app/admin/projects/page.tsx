@@ -102,7 +102,7 @@ export default function ProjectsPage() {
       {filtering && items.length > 0 && <p className="hint" style={{ marginTop: -6 }}>กำลังกรองอยู่ จึงปิดปุ่มเรียงลำดับไว้ ล้างตัวกรองเพื่อเรียงลำดับ</p>}
 
       {loading && <p>กำลังโหลด...</p>}
-      {!loading && items.length === 0 && <div className="ad-card"><p style={{ margin: 0 }}>ยังไม่มีผลงาน กด "เพิ่มผลงาน" เพื่อเริ่มได้เลย</p></div>}
+      {!loading && items.length === 0 && <div className="ad-card"><p style={{ margin: 0 }}>ยังไม่มีผลงาน กด &quot;เพิ่มผลงาน&quot; เพื่อเริ่มได้เลย</p></div>}
       {!loading && items.length > 0 && shown.length === 0 && <p>ไม่พบผลงานที่ตรงกับตัวกรอง</p>}
 
       {shown.map((p, i) => {

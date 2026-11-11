@@ -3,7 +3,8 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 type CookieToSet = { name: string; value: string; options: CookieOptions }
 
-// Protects /admin/*: only the admin email may enter (data is also protected by RLS in the DB)
+// Protects /admin/*: only the admin email may enter (data is also protected by RLS in the DB).
+// If NEXT_PUBLIC_ADMIN_EMAIL is not set, no one is allowed in (fail closed).
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request })
 
@@ -31,7 +32,7 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
   const isLogin = path === '/admin/login'
   const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL?.trim().toLowerCase()
-  const allowed = !!user && (!adminEmail || user.email?.toLowerCase() === adminEmail)
+  const allowed = !!user && !!adminEmail && user.email?.toLowerCase() === adminEmail
 
   if (!allowed && !isLogin) {
     const url = request.nextUrl.clone()

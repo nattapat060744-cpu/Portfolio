@@ -91,7 +91,7 @@ export default function Dashboard() {
 
         <div className="ad-card">
           <h2>ผลงานล่าสุด</h2>
-          {projects.length === 0 && <p className="hint">ยังไม่มีผลงาน กด "เพิ่มผลงาน" เพื่อเริ่มได้เลย</p>}
+          {projects.length === 0 && <p className="hint">ยังไม่มีผลงาน กด &quot;เพิ่มผลงาน&quot; เพื่อเริ่มได้เลย</p>}
           {projects.slice(0, 5).map((p) => (
             <Link key={p.id} href={`/admin/projects/${p.id}`} className="ad-check">
               <span style={{ flex: 1 }}>
