@@ -5,7 +5,7 @@ type CookieToSet = { name: string; value: string; options: CookieOptions }
 
 // Protects /admin/*: only the admin email may enter (data is also protected by RLS in the DB).
 // If NEXT_PUBLIC_ADMIN_EMAIL is not set, no one is allowed in (fail closed).
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request })
 
   const supabase = createServerClient(

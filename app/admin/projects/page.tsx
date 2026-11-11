@@ -28,6 +28,8 @@ export default function ProjectsPage() {
   }, [sb])
 
   useEffect(() => {
+    // initial data fetch on mount; state updates happen after the awaited request
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load()
   }, [load])
 

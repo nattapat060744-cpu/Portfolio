@@ -48,6 +48,8 @@ export default function LoginPage() {
   useEffect(() => {
     try {
       const saved = localStorage.getItem('adm_email')
+      // client-only read of localStorage; must run after mount to avoid hydration mismatch
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (saved) setEmail(saved)
     } catch {}
   }, [])

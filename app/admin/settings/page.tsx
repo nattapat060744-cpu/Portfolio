@@ -66,7 +66,10 @@ export default function SettingsPage() {
 
   useEffect(() => {
     const t = new URLSearchParams(window.location.search).get('tab')
+    // client-only reads of the URL; must run after mount to avoid hydration mismatch
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (t && TABS.some((x) => x.id === t)) setTab(t)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHost(window.location.host)
   }, [])
 
